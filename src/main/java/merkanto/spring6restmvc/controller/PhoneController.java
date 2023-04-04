@@ -15,13 +15,20 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/phone")
 public class PhoneController {
+
+    public static final String PHONE_ID = "phoneId";
+
+    public static final String PHONE_PATH = "/api/v1/phone";
+
+    public static final String PHONE_PATH_ID = PHONE_PATH + "/{" + PHONE_ID + "}";
+
+
 
     private final PhoneService phoneService;
 
-    @PatchMapping("{phoneId}")
-    public ResponseEntity updatePhonePatchById(@PathVariable("phoneId") UUID phoneId,
+    @PatchMapping(PHONE_PATH_ID)
+    public ResponseEntity updatePhonePatchById(@PathVariable(PHONE_ID) UUID phoneId,
                                                @RequestBody Phone phone) {
 
         phoneService.patchPhoneById(phoneId, phone);
@@ -29,39 +36,39 @@ public class PhoneController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("{phoneId}")
-    public ResponseEntity deleteById(@PathVariable("phoneId") UUID phoneId){
+    @DeleteMapping(PHONE_PATH_ID)
+    public ResponseEntity deleteById(@PathVariable(PHONE_ID) UUID phoneId){
 
         phoneService.deleteById(phoneId);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("{phoneId}")
-    public ResponseEntity updateById(@PathVariable("phoneId") UUID phoneId, @RequestBody Phone phone) {
+    @PutMapping(PHONE_PATH_ID)
+    public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @RequestBody Phone phone) {
 
         phoneService.updatePhoneById(phoneId, phone);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping
+    @PostMapping(PHONE_PATH)
     public ResponseEntity handlePost(@RequestBody Phone phone) {
         Phone savedPhone = phoneService.saveNewPhone(phone);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/phone/" + savedPhone.getId().toString());
+        headers.add("Location", PHONE_PATH + "/" + savedPhone.getId().toString());
 
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(value = PHONE_PATH)
     public List<Phone> listPhones() {
         return phoneService.listPhones();
     }
 
-    @RequestMapping(value = "/{phoneId}", method = RequestMethod.GET)
-    public Phone getPhoneById(@PathVariable("phoneId") UUID phoneId) {
+    @GetMapping(value = PHONE_PATH_ID)
+    public Phone getPhoneById(@PathVariable(PHONE_ID) UUID phoneId) {
         log.debug("Get Phone by Id - in controller");
 
         return phoneService.getPhoneById(phoneId);
