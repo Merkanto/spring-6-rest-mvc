@@ -2,7 +2,7 @@ package merkanto.spring6restmvc.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import merkanto.spring6restmvc.model.Phone;
+import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.services.PhoneService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class PhoneController {
 
     @PatchMapping(PHONE_PATH_ID)
     public ResponseEntity updatePhonePatchById(@PathVariable(PHONE_ID) UUID phoneId,
-                                               @RequestBody Phone phone) {
+                                               @RequestBody PhoneDTO phone) {
 
         phoneService.patchPhoneById(phoneId, phone);
 
@@ -45,7 +45,7 @@ public class PhoneController {
     }
 
     @PutMapping(PHONE_PATH_ID)
-    public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @RequestBody Phone phone) {
+    public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @RequestBody PhoneDTO phone) {
 
         phoneService.updatePhoneById(phoneId, phone);
 
@@ -53,8 +53,8 @@ public class PhoneController {
     }
 
     @PostMapping(PHONE_PATH)
-    public ResponseEntity handlePost(@RequestBody Phone phone) {
-        Phone savedPhone = phoneService.saveNewPhone(phone);
+    public ResponseEntity handlePost(@RequestBody PhoneDTO phone) {
+        PhoneDTO savedPhone = phoneService.saveNewPhone(phone);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", PHONE_PATH + "/" + savedPhone.getId().toString());
@@ -63,14 +63,14 @@ public class PhoneController {
     }
 
     @GetMapping(value = PHONE_PATH)
-    public List<Phone> listPhones() {
+    public List<PhoneDTO> listPhones() {
         return phoneService.listPhones();
     }
 
     @GetMapping(value = PHONE_PATH_ID)
-    public Phone getPhoneById(@PathVariable(PHONE_ID) UUID phoneId) {
+    public PhoneDTO getPhoneById(@PathVariable(PHONE_ID) UUID phoneId) {
         log.debug("Get Phone by Id - in controller");
 
-        return phoneService.getPhoneById(phoneId);
+        return phoneService.getPhoneById(phoneId).orElseThrow(NotFoundException::new);
     }
 }

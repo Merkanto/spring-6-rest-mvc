@@ -1,21 +1,22 @@
 package merkanto.spring6restmvc.services;
 
-import merkanto.spring6restmvc.model.Phone;
+import merkanto.spring6restmvc.model.PhoneDTO;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PhoneService {
 
-    List<Phone> listPhones();
+    List<PhoneDTO> listPhones();
 
-    Phone getPhoneById(UUID id);
+    Optional<PhoneDTO> getPhoneById(UUID id);
 
-    Phone saveNewPhone(Phone phone);
+    PhoneDTO saveNewPhone(PhoneDTO phone);
 
-    void updatePhoneById(UUID phoneId, Phone phone);
+    void updatePhoneById(UUID phoneId, PhoneDTO phone);
 
     void deleteById(UUID phoneId);
 
-    void patchPhoneById(UUID phoneId, Phone phone);
+    void patchPhoneById(UUID phoneId, PhoneDTO phone);
 }

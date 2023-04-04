@@ -1,7 +1,7 @@
 package merkanto.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import merkanto.spring6restmvc.model.Phone;
+import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.services.PhoneService;
 import merkanto.spring6restmvc.services.PhoneServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,7 @@ class PhoneControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<Phone> phoneArgumentCaptor;
+    ArgumentCaptor<PhoneDTO> phoneArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +54,7 @@ class PhoneControllerTest {
 
     @Test
     void testPatchPhone() throws Exception {
-        Phone phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
 
         Map<String, Object> phoneMap = new HashMap<>();
         phoneMap.put("phoneName", "New Name");
@@ -72,7 +73,7 @@ class PhoneControllerTest {
 
     @Test
     void testDeletePhone() throws Exception {
-        Phone phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
 
         mockMvc.perform(delete(PhoneController.PHONE_PATH_ID, phone.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -85,7 +86,7 @@ class PhoneControllerTest {
 
     @Test
     void testUpdatePhone() throws Exception {
-        Phone phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
 
         mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
                 .accept(MediaType.APPLICATION_JSON)
@@ -93,17 +94,17 @@ class PhoneControllerTest {
                 .content(objectMapper.writeValueAsString(phone)))
                 .andExpect(status().isNoContent());
 
-        verify(phoneService).updatePhoneById(any(UUID.class), any(Phone.class));
+        verify(phoneService).updatePhoneById(any(UUID.class), any(PhoneDTO.class));
     }
 
     @Test
     void testCreatedNewPhone() throws Exception {
 
-        Phone phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
         phone.setVersion(null);
         phone.setId(null);
 
-        given(phoneService.saveNewPhone(any(Phone.class))).willReturn(phoneServiceImpl.listPhones().get(1));
+        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones().get(1));
 
         mockMvc.perform(post(PhoneController.PHONE_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -125,11 +126,20 @@ class PhoneControllerTest {
     }
 
     @Test
+    void getPhoneByIdNotFound() throws Exception {
+
+        given(phoneService.getPhoneById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(PhoneController.PHONE_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getPhoneById() throws Exception {
 
-        Phone testPhone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO testPhone = phoneServiceImpl.listPhones().get(0);
 
-        given(phoneService.getPhoneById(testPhone.getId())).willReturn(testPhone);
+        given(phoneService.getPhoneById(testPhone.getId())).willReturn(Optional.of(testPhone));
 
         mockMvc.perform(get(PhoneController.PHONE_PATH_ID, testPhone.getId())
                 .accept(MediaType.APPLICATION_JSON))

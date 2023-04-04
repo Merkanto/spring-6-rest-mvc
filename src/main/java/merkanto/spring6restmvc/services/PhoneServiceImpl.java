@@ -1,7 +1,7 @@
 package merkanto.spring6restmvc.services;
 
 import lombok.extern.slf4j.Slf4j;
-import merkanto.spring6restmvc.model.Phone;
+import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.model.PhoneStyle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,12 +14,12 @@ import java.util.*;
 @Service
 public class PhoneServiceImpl implements PhoneService {
 
-    private Map<UUID, Phone> phoneMap;
+    private Map<UUID, PhoneDTO> phoneMap;
 
     public PhoneServiceImpl() {
         this.phoneMap = new HashMap<>();
 
-        Phone phone1 = Phone.builder()
+        PhoneDTO phone1 = PhoneDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .phoneName("Apple")
@@ -31,7 +31,7 @@ public class PhoneServiceImpl implements PhoneService {
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        Phone phone2 = Phone.builder()
+        PhoneDTO phone2 = PhoneDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .phoneName("Nokia")
@@ -43,7 +43,7 @@ public class PhoneServiceImpl implements PhoneService {
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        Phone phone3 = Phone.builder()
+        PhoneDTO phone3 = PhoneDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .phoneName("Samsung")
@@ -61,21 +61,21 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public List<Phone> listPhones() {
+    public List<PhoneDTO> listPhones() {
         return new ArrayList<>(phoneMap.values());
     }
 
     @Override
-    public Phone getPhoneById(UUID id) {
+    public Optional<PhoneDTO> getPhoneById(UUID id) {
         log.debug("Get Phone by Id - in service. Id: " + id.toString());
 
-        return phoneMap.get(id);
+        return Optional.of(phoneMap.get(id));
     }
 
     @Override
-    public Phone saveNewPhone(Phone phone) {
+    public PhoneDTO saveNewPhone(PhoneDTO phone) {
 
-        Phone savedPhone = Phone.builder()
+        PhoneDTO savedPhone = PhoneDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .createdDate(LocalDateTime.now())
@@ -93,8 +93,8 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void updatePhoneById(UUID phoneId, Phone phone) {
-        Phone existing = phoneMap.get(phoneId);
+    public void updatePhoneById(UUID phoneId, PhoneDTO phone) {
+        PhoneDTO existing = phoneMap.get(phoneId);
         existing.setPhoneName(phone.getPhoneName());
         existing.setPrice(phone.getPrice());
         existing.setImei(phone.getImei());
@@ -107,8 +107,8 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void patchPhoneById(UUID phoneId, Phone phone) {
-        Phone existing = phoneMap.get(phoneId);
+    public void patchPhoneById(UUID phoneId, PhoneDTO phone) {
+        PhoneDTO existing = phoneMap.get(phoneId);
 
         if (StringUtils.hasText(phone.getPhoneName())){
             existing.setPhoneName(phone.getPhoneName());
