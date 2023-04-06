@@ -93,21 +93,24 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void updatePhoneById(UUID phoneId, PhoneDTO phone) {
+    public Optional<PhoneDTO> updatePhoneById(UUID phoneId, PhoneDTO phone) {
         PhoneDTO existing = phoneMap.get(phoneId);
         existing.setPhoneName(phone.getPhoneName());
         existing.setPrice(phone.getPrice());
         existing.setImei(phone.getImei());
         existing.setQuantityOnHand(phone.getQuantityOnHand());
+
+        return Optional.of(existing);
     }
 
     @Override
-    public void deleteById(UUID phoneId) {
+    public Boolean deleteById(UUID phoneId) {
         phoneMap.remove(phoneId);
+        return true;
     }
 
     @Override
-    public void patchPhoneById(UUID phoneId, PhoneDTO phone) {
+    public Optional<PhoneDTO> patchPhoneById(UUID phoneId, PhoneDTO phone) {
         PhoneDTO existing = phoneMap.get(phoneId);
 
         if (StringUtils.hasText(phone.getPhoneName())){
@@ -129,5 +132,7 @@ public class PhoneServiceImpl implements PhoneService {
         if (StringUtils.hasText(phone.getImei())) {
             existing.setImei(phone.getImei());
         }
+
+        return Optional.of(existing);
     }
 }

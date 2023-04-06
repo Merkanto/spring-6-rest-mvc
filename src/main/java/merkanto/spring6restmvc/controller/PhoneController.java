@@ -39,7 +39,9 @@ public class PhoneController {
     @DeleteMapping(PHONE_PATH_ID)
     public ResponseEntity deleteById(@PathVariable(PHONE_ID) UUID phoneId){
 
-        phoneService.deleteById(phoneId);
+        if(!phoneService.deleteById(phoneId)){
+            throw new NotFoundException();
+        }
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -47,7 +49,9 @@ public class PhoneController {
     @PutMapping(PHONE_PATH_ID)
     public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @RequestBody PhoneDTO phone) {
 
-        phoneService.updatePhoneById(phoneId, phone);
+        if(phoneService.updatePhoneById(phoneId, phone).isEmpty()) {
+            throw new NotFoundException();
+        }
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

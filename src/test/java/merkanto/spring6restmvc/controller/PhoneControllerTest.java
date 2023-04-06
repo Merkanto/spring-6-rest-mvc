@@ -75,6 +75,8 @@ class PhoneControllerTest {
     void testDeletePhone() throws Exception {
         PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
 
+        given(phoneService.deleteById(any())).willReturn(true);
+
         mockMvc.perform(delete(PhoneController.PHONE_PATH_ID, phone.getId())
                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isNoContent());
@@ -87,6 +89,8 @@ class PhoneControllerTest {
     @Test
     void testUpdatePhone() throws Exception {
         PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+
+        given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
 
         mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
                 .accept(MediaType.APPLICATION_JSON)

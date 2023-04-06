@@ -14,9 +14,9 @@ public interface PhoneService {
 
     PhoneDTO saveNewPhone(PhoneDTO phone);
 
-    void updatePhoneById(UUID phoneId, PhoneDTO phone);
+    Optional<PhoneDTO> updatePhoneById(UUID phoneId, PhoneDTO phone);
 
-    void deleteById(UUID phoneId);
+    Boolean deleteById(UUID phoneId);
 
-    void patchPhoneById(UUID phoneId, PhoneDTO phone);
+    Optional<PhoneDTO> patchPhoneById(UUID phoneId, PhoneDTO phone);
 }

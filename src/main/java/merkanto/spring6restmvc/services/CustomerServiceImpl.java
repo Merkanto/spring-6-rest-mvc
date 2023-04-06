@@ -46,8 +46,28 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> getAllCustomers() {
-        return new ArrayList<>(customerMap.values());
+    public Optional<CustomerDTO> patchCustomerById(UUID customerId, CustomerDTO customer) {
+        CustomerDTO existing = customerMap.get(customerId);
+
+        if (StringUtils.hasText(customer.getName())) {
+            existing.setName(customer.getName());
+        }
+
+        return Optional.of(existing);
+    }
+
+    @Override
+    public Boolean deleteCustomerById(UUID customerId) {
+        customerMap.remove(customerId);
+
+        return true;
+    }
+
+    @Override
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customer) {
+        CustomerDTO existing = customerMap.get(customerId);
+        existing.setName(customer.getName());
+        return Optional.of(existing);
     }
 
     @Override
@@ -67,27 +87,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, CustomerDTO customer) {
-        CustomerDTO existing = customerMap.get(customerId);
-        existing.setName(customer.getName());
-    }
-
-    @Override
-    public void deleteById(UUID customerId) {
-        customerMap.remove(customerId);
-    }
-
-    @Override
-    public void patchCustomerById(UUID customerId, CustomerDTO customer) {
-        CustomerDTO existing = customerMap.get(customerId);
-
-        if (StringUtils.hasText(customer.getName())) {
-            existing.setName(customer.getName());
-        }
-    }
-
-    @Override
     public Optional<CustomerDTO> getCustomerById(UUID uuid) {
         return Optional.of(customerMap.get(uuid));
     }
+
+    @Override
+    public List<CustomerDTO> getAllCustomers() {
+        return new ArrayList<>(customerMap.values());
+    }
 }
+
