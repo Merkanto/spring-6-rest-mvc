@@ -1,6 +1,9 @@
 package merkanto.spring6restmvc.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import merkanto.spring6restmvc.model.PhoneStyle;
 import org.hibernate.annotations.GenericGenerator;
@@ -25,10 +28,23 @@ public class Phone {
 
     @Version
     private Integer version;
+
+    @NotNull
+    @NotBlank
+    @Column(length = 50)
+    @Size(max = 50)
     private String phoneName;
+
+    @NotNull
     private PhoneStyle phoneStyle;
+
+    @NotNull
+    @NotBlank
+    @Size(max = 255)
     private String imei;
     private Integer quantityOnHand;
+
+    @NotNull
     private BigDecimal price;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;

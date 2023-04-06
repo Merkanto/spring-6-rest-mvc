@@ -7,6 +7,7 @@ import merkanto.spring6restmvc.services.PhoneService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class PhoneController {
     }
 
     @PutMapping(PHONE_PATH_ID)
-    public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @RequestBody PhoneDTO phone) {
+    public ResponseEntity updateById(@PathVariable(PHONE_ID) UUID phoneId, @Validated @RequestBody PhoneDTO phone) {
 
         if(phoneService.updatePhoneById(phoneId, phone).isEmpty()) {
             throw new NotFoundException();
@@ -57,7 +58,7 @@ public class PhoneController {
     }
 
     @PostMapping(PHONE_PATH)
-    public ResponseEntity handlePost(@RequestBody PhoneDTO phone) {
+    public ResponseEntity handlePost(@Validated @RequestBody PhoneDTO phone) {
         PhoneDTO savedPhone = phoneService.saveNewPhone(phone);
 
         HttpHeaders headers = new HttpHeaders();

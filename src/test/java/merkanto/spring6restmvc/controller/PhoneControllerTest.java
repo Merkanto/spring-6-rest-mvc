@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,12 +94,27 @@ class PhoneControllerTest {
         given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
 
         mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(phone)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phone)))
                 .andExpect(status().isNoContent());
 
         verify(phoneService).updatePhoneById(any(UUID.class), any(PhoneDTO.class));
+    }
+
+    @Test
+    void testUpdatePhoneBlankName() throws Exception {
+        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+        phone.setPhoneName("");
+
+        given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
+
+        mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phone)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
     }
 
     @Test
@@ -116,6 +132,24 @@ class PhoneControllerTest {
                         .content(objectMapper.writeValueAsString(phone)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @Test
+    void testCreatePhoneNullPhoneName() throws Exception {
+
+        PhoneDTO phoneDTO = PhoneDTO.builder().build();
+
+        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones().get(1));
+
+        MvcResult mvcResult = mockMvc.perform(post(PhoneController.PHONE_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phoneDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     @Test

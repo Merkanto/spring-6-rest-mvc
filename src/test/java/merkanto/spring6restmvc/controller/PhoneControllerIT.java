@@ -1,22 +1,34 @@
 package merkanto.spring6restmvc.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import merkanto.spring6restmvc.entities.Phone;
 import merkanto.spring6restmvc.entities.mappers.PhoneMapper;
 import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.repositories.PhoneRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 class PhoneControllerIT {
@@ -28,6 +40,33 @@ class PhoneControllerIT {
 
     @Autowired
     PhoneMapper phoneMapper;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    WebApplicationContext wac;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+
+    @Test
+    void testPatchPhoneBadName() throws Exception {
+        Phone phone = phoneRepository.findAll().get(0);
+
+        Map<String, Object> phoneMap = new HashMap<>();
+        phoneMap.put("phoneName", "New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name ");
+
+        mockMvc.perform(patch(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(phoneMap)))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     void testDeleteByIdNotFound() {

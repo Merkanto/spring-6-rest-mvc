@@ -1,0 +1,52 @@
+[
+  {
+    "codes": [
+      "NotNull.phoneDTO.phoneName",
+      "NotNull.phoneName",
+      "NotNull.java.lang.String",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "phoneDTO.phoneName",
+          "phoneName"
+        ],
+        "arguments": null,
+        "defaultMessage": "phoneName",
+        "code": "phoneName"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "objectName": "phoneDTO",
+    "field": "phoneName",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotNull"
+  },
+  {
+    "codes": [
+      "NotBlank.phoneDTO.phoneName",
+      "NotBlank.phoneName",
+      "NotBlank.java.lang.String",
+      "NotBlank"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "phoneDTO.phoneName",
+          "phoneName"
+        ],
+        "arguments": null,
+        "defaultMessage": "phoneName",
+        "code": "phoneName"
+      }
+    ],
+    "defaultMessage": "must not be blank",
+    "objectName": "phoneDTO",
+    "field": "phoneName",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotBlank"
+  }
+]
