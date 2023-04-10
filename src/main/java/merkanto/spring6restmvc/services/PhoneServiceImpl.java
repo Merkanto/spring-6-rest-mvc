@@ -3,6 +3,8 @@ package merkanto.spring6restmvc.services;
 import lombok.extern.slf4j.Slf4j;
 import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.model.PhoneStyle;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -61,8 +63,8 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public List<PhoneDTO> listPhones() {
-        return new ArrayList<>(phoneMap.values());
+    public Page<PhoneDTO> listPhones(String phoneName, PhoneStyle phoneStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
+        return new PageImpl<>(new ArrayList<>(phoneMap.values()));
     }
 
     @Override

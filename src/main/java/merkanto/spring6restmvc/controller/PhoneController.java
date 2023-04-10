@@ -3,14 +3,15 @@ package merkanto.spring6restmvc.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import merkanto.spring6restmvc.model.PhoneDTO;
+import merkanto.spring6restmvc.model.PhoneStyle;
 import merkanto.spring6restmvc.services.PhoneService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -68,8 +69,12 @@ public class PhoneController {
     }
 
     @GetMapping(value = PHONE_PATH)
-    public List<PhoneDTO> listPhones() {
-        return phoneService.listPhones();
+    public Page<PhoneDTO> listPhones(@RequestParam(required = false) String phoneName,
+                                     @RequestParam(required = false) PhoneStyle phoneStyle,
+                                     @RequestParam(required = false) Boolean showInventory,
+                                     @RequestParam(required = false) Integer pageNumber,
+                                     @RequestParam(required = false) Integer pageSize) {
+        return phoneService.listPhones(phoneName, phoneStyle, showInventory, pageNumber, pageSize);
     }
 
     @GetMapping(value = PHONE_PATH_ID)

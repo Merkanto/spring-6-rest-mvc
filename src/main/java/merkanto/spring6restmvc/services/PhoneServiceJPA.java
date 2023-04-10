@@ -1,10 +1,16 @@
 package merkanto.spring6restmvc.services;
 
 import lombok.RequiredArgsConstructor;
+import merkanto.spring6restmvc.entities.Phone;
 import merkanto.spring6restmvc.entities.mappers.PhoneMapper;
 import merkanto.spring6restmvc.model.PhoneDTO;
+import merkanto.spring6restmvc.model.PhoneStyle;
 import merkanto.spring6restmvc.repositories.PhoneRepository;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -21,12 +27,70 @@ public class PhoneServiceJPA implements PhoneService {
     private final PhoneRepository phoneRepository;
     private final PhoneMapper phoneMapper;
 
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     @Override
-    public List<PhoneDTO> listPhones() {
-        return phoneRepository.findAll()
-                .stream()
-                .map(phoneMapper::phoneToPhoneDto)
-                .collect(Collectors.toList());
+    public Page<PhoneDTO> listPhones(String phoneName, PhoneStyle phoneStyle, Boolean showInventory,
+                                     Integer pageNumber, Integer pageSize) {
+
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        Page<Phone> phonePage;
+
+        if (StringUtils.hasText(phoneName) && phoneStyle == null) {
+            phonePage = listPhonesByName(phoneName, pageRequest);
+        } else if (!StringUtils.hasText(phoneName) && phoneStyle != null) {
+            phonePage = listPhonesByStyle(phoneStyle, pageRequest);
+        } else if (StringUtils.hasText(phoneName) && phoneStyle != null) {
+            phonePage = listPhonesByNameAndStyle(phoneName, phoneStyle, pageRequest);
+        } else {
+            phonePage = phoneRepository.findAll(pageRequest);
+        }
+
+        if (showInventory != null && !showInventory) {
+            phonePage.forEach(phone -> phone.setQuantityOnHand(null));
+        }
+
+        return phonePage.map(phoneMapper::phoneToPhoneDto);
+    }
+
+    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber - 1;
+        } else {
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if (pageSize == null) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if (pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        Sort sort = Sort.by(Sort.Order.asc("phoneName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
+    }
+
+    private Page<Phone> listPhonesByNameAndStyle(String phoneName, PhoneStyle phoneStyle, Pageable pageable) {
+        return phoneRepository.findAllByPhoneNameIsLikeIgnoreCaseAndPhoneStyle("%" + phoneName + "%",
+                phoneStyle, pageable);
+    }
+
+    public Page<Phone> listPhonesByStyle(PhoneStyle phoneStyle, Pageable pageable) {
+        return phoneRepository.findAllByPhoneStyle(phoneStyle, pageable);
+    }
+
+    public Page<Phone> listPhonesByName(String phoneName, Pageable pageable){
+        return phoneRepository.findAllByPhoneNameIsLikeIgnoreCase("%" + phoneName + "%", pageable);
     }
 
     @Override

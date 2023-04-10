@@ -55,7 +55,7 @@ class PhoneControllerTest {
 
     @Test
     void testPatchPhone() throws Exception {
-        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
 
         Map<String, Object> phoneMap = new HashMap<>();
         phoneMap.put("phoneName", "New Name");
@@ -74,7 +74,7 @@ class PhoneControllerTest {
 
     @Test
     void testDeletePhone() throws Exception {
-        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
 
         given(phoneService.deleteById(any())).willReturn(true);
 
@@ -89,7 +89,7 @@ class PhoneControllerTest {
 
     @Test
     void testUpdatePhone() throws Exception {
-        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
 
         given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
 
@@ -104,7 +104,7 @@ class PhoneControllerTest {
 
     @Test
     void testUpdatePhoneBlankName() throws Exception {
-        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
         phone.setPhoneName("");
 
         given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
@@ -118,16 +118,15 @@ class PhoneControllerTest {
     }
 
     @Test
-    void testCreatedNewPhone() throws Exception {
-
-        PhoneDTO phone = phoneServiceImpl.listPhones().get(0);
+    void testCreateNewPhone() throws Exception {
+        PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
         phone.setVersion(null);
         phone.setId(null);
 
-        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones().get(1));
+        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(1));
 
         mockMvc.perform(post(PhoneController.PHONE_PATH)
-                .accept(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phone)))
                 .andExpect(status().isCreated())
@@ -139,7 +138,7 @@ class PhoneControllerTest {
 
         PhoneDTO phoneDTO = PhoneDTO.builder().build();
 
-        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones().get(1));
+        given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(PhoneController.PHONE_PATH)
                         .accept(MediaType.APPLICATION_JSON)
@@ -154,13 +153,13 @@ class PhoneControllerTest {
 
     @Test
     void testListPhones() throws Exception {
-        given(phoneService.listPhones()).willReturn(phoneServiceImpl.listPhones());
+        given(phoneService.listPhones(any(), any(), any(), any(), any())).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25));
 
         mockMvc.perform(get("/api/v1/phone")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.length()", is(11)));
     }
 
     @Test
@@ -175,7 +174,7 @@ class PhoneControllerTest {
     @Test
     void getPhoneById() throws Exception {
 
-        PhoneDTO testPhone = phoneServiceImpl.listPhones().get(0);
+        PhoneDTO testPhone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
 
         given(phoneService.getPhoneById(testPhone.getId())).willReturn(Optional.of(testPhone));
 

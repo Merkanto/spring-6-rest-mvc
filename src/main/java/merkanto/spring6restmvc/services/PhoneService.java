@@ -1,14 +1,15 @@
 package merkanto.spring6restmvc.services;
 
 import merkanto.spring6restmvc.model.PhoneDTO;
+import merkanto.spring6restmvc.model.PhoneStyle;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface PhoneService {
 
-    List<PhoneDTO> listPhones();
+    Page<PhoneDTO> listPhones(String phoneName, PhoneStyle phoneStyle, Boolean showInventory, Integer pageNumber, Integer pageSize);
 
     Optional<PhoneDTO> getPhoneById(UUID id);
 
