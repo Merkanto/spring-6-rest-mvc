@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +31,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +58,9 @@ class PhoneControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
     @Disabled // just for demo purposes
@@ -91,19 +96,21 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndNameShowInventoryTruePage2() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "true")
                         .queryParam("pageNumber", "2")
                         .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.size()", is(0)))
-                .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
+                .andExpect(jsonPath("$.content.size()", is(0)));
+//                .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
     }
 
     @Test
     void tesListPhonesByStyleAndNameShowInventoryTrue() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "true")
@@ -116,6 +123,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndNameShowInventoryFalse() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "false")
@@ -128,6 +136,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndName() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name()))
                 .andExpect(status().isOk())
@@ -135,8 +144,17 @@ class PhoneControllerIT {
     }
 
     @Test
+    void testNoAuth() throws Exception {
+        // Test No Auth
+        mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .queryParam("phoneStyle", PhoneStyle.APPLE.name()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void testListPhonesByStyle() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(11)));
@@ -145,6 +163,7 @@ class PhoneControllerIT {
     @Test
     void testListPhonesByName() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .queryParam("phoneName", "APPLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(11)));
@@ -158,6 +177,7 @@ class PhoneControllerIT {
         phoneMap.put("phoneName", "New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name ");
 
         mockMvc.perform(patch(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phoneMap)))

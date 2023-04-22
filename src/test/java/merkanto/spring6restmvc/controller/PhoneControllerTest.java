@@ -1,6 +1,7 @@
 package merkanto.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import merkanto.spring6restmvc.config.SpringSecConfig;
 import merkanto.spring6restmvc.model.PhoneDTO;
 import merkanto.spring6restmvc.services.PhoneService;
 import merkanto.spring6restmvc.services.PhoneServiceImpl;
@@ -11,6 +12,7 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,10 +27,12 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PhoneController.class)
+@Import(SpringSecConfig.class)
 class PhoneControllerTest {
 
     @Autowired
@@ -53,6 +57,9 @@ class PhoneControllerTest {
         phoneServiceImpl = new PhoneServiceImpl();
     }
 
+    public static final String USERNAME = "user1";
+    public static final String PASSWORD = "password";
+
     @Test
     void testPatchPhone() throws Exception {
         PhoneDTO phone = phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(0);
@@ -61,6 +68,7 @@ class PhoneControllerTest {
         phoneMap.put("phoneName", "New Name");
 
         mockMvc.perform(patch(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .with(httpBasic(USERNAME, PASSWORD))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phoneMap)))
@@ -79,6 +87,7 @@ class PhoneControllerTest {
         given(phoneService.deleteById(any())).willReturn(true);
 
         mockMvc.perform(delete(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .with(httpBasic(USERNAME, PASSWORD))
                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isNoContent());
 
@@ -94,6 +103,7 @@ class PhoneControllerTest {
         given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
 
         mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .with(httpBasic(USERNAME, PASSWORD))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phone)))
@@ -110,6 +120,7 @@ class PhoneControllerTest {
         given(phoneService.updatePhoneById(any(), any())).willReturn(Optional.of(phone));
 
         mockMvc.perform(put(PhoneController.PHONE_PATH_ID, phone.getId())
+                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phone)))
@@ -126,6 +137,7 @@ class PhoneControllerTest {
         given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(1));
 
         mockMvc.perform(post(PhoneController.PHONE_PATH)
+                        .with(httpBasic(USERNAME, PASSWORD))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phone)))
@@ -141,6 +153,7 @@ class PhoneControllerTest {
         given(phoneService.saveNewPhone(any(PhoneDTO.class))).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25).getContent().get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(PhoneController.PHONE_PATH)
+                        .with(httpBasic(USERNAME, PASSWORD))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phoneDTO)))
@@ -156,6 +169,7 @@ class PhoneControllerTest {
         given(phoneService.listPhones(any(), any(), any(), any(), any())).willReturn(phoneServiceImpl.listPhones(null, null, false, 1, 25));
 
         mockMvc.perform(get("/api/v1/phone")
+                        .with(httpBasic(USERNAME, PASSWORD))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -167,7 +181,8 @@ class PhoneControllerTest {
 
         given(phoneService.getPhoneById(any(UUID.class))).willReturn(Optional.empty());
 
-        mockMvc.perform(get(PhoneController.PHONE_PATH_ID, UUID.randomUUID()))
+        mockMvc.perform(get(PhoneController.PHONE_PATH_ID, UUID.randomUUID())
+                        .with(httpBasic(USERNAME, PASSWORD)))
                 .andExpect(status().isNotFound());
     }
 
@@ -179,6 +194,7 @@ class PhoneControllerTest {
         given(phoneService.getPhoneById(testPhone.getId())).willReturn(Optional.of(testPhone));
 
         mockMvc.perform(get(PhoneController.PHONE_PATH_ID, testPhone.getId())
+                        .with(httpBasic(USERNAME, PASSWORD))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
