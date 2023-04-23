@@ -14,8 +14,7 @@ public class SpringSecConfig {
         httpSecurity
                 .authorizeHttpRequests()
                 .anyRequest().authenticated()
-                .and().httpBasic(Customizer.withDefaults())
-                .csrf().ignoringRequestMatchers("/api/**");
+                .and().oauth2ResourceServer().jwt();
         return httpSecurity.build();
     }
 }

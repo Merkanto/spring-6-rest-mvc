@@ -96,7 +96,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndNameShowInventoryTruePage2() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "true")
@@ -110,7 +110,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndNameShowInventoryTrue() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "true")
@@ -123,7 +123,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndNameShowInventoryFalse() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name())
                         .queryParam("showInventory", "false")
@@ -136,7 +136,7 @@ class PhoneControllerIT {
     @Test
     void tesListPhonesByStyleAndName() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneName", "APPLE")
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name()))
                 .andExpect(status().isOk())
@@ -154,7 +154,7 @@ class PhoneControllerIT {
     @Test
     void testListPhonesByStyle() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneStyle", PhoneStyle.APPLE.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(11)));
@@ -163,7 +163,7 @@ class PhoneControllerIT {
     @Test
     void testListPhonesByName() throws Exception {
         mockMvc.perform(get(PhoneController.PHONE_PATH)
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .queryParam("phoneName", "APPLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(11)));
@@ -177,7 +177,7 @@ class PhoneControllerIT {
         phoneMap.put("phoneName", "New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name New Name ");
 
         mockMvc.perform(patch(PhoneController.PHONE_PATH_ID, phone.getId())
-                        .with(httpBasic(PhoneControllerTest.USERNAME, PhoneControllerTest.PASSWORD))
+                        .with(PhoneControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(phoneMap)))
