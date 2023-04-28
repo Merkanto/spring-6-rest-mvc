@@ -42,10 +42,10 @@ public class Category {
 
     @Builder.Default
     @ManyToMany
-    @JoinTable(name = "phone_category",
+    @JoinTable(name = "beer_category",
             joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "phone_id"))
-    private Set<Phone> phones = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "beer_id"))
+    private Set<Beer> beers = new HashSet<>();
 
 
 

@@ -1,7 +1,7 @@
 package merkanto.spring6restmvc.services;
 
 import lombok.RequiredArgsConstructor;
-import merkanto.spring6restmvc.entities.mappers.CustomerMapper;
+import merkanto.spring6restmvc.mappers.CustomerMapper;
 import merkanto.spring6restmvc.model.CustomerDTO;
 import merkanto.spring6restmvc.repositories.CustomerRepository;
 import org.springframework.context.annotation.Primary;

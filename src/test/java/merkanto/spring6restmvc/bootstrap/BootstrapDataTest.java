@@ -1,35 +1,43 @@
 package merkanto.spring6restmvc.bootstrap;
 
+import merkanto.spring6restmvc.bootstrap.BootstrapData;
+import merkanto.spring6restmvc.repositories.BeerRepository;
 import merkanto.spring6restmvc.repositories.CustomerRepository;
-import merkanto.spring6restmvc.repositories.PhoneRepository;
+import merkanto.spring6restmvc.services.BeerCsvService;
+import merkanto.spring6restmvc.services.BeerCsvServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Import(BeerCsvServiceImpl.class)
 class BootstrapDataTest {
 
     @Autowired
-    PhoneRepository phoneRepository;
+    BeerRepository beerRepository;
 
     @Autowired
     CustomerRepository customerRepository;
+
+    @Autowired
+    BeerCsvService csvService;
 
     BootstrapData bootstrapData;
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(phoneRepository, customerRepository);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, csvService);
     }
 
     @Test
-    void testRun() throws Exception {
+    void Testrun() throws Exception {
         bootstrapData.run(null);
 
-        assertThat(phoneRepository.count()).isEqualTo(3);
+        assertThat(beerRepository.count()).isEqualTo(2413);
         assertThat(customerRepository.count()).isEqualTo(3);
     }
 }

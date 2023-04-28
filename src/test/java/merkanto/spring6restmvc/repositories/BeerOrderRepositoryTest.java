@@ -1,52 +1,50 @@
 package merkanto.spring6restmvc.repositories;
 
 import merkanto.spring6restmvc.entities.Customer;
-import merkanto.spring6restmvc.entities.Phone;
-import merkanto.spring6restmvc.entities.PhoneOrder;
-import merkanto.spring6restmvc.entities.PhoneOrderShipment;
+import merkanto.spring6restmvc.entities.Beer;
+import merkanto.spring6restmvc.entities.BeerOrder;
+import merkanto.spring6restmvc.entities.BeerOrderShipment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
-class PhoneOrderRepositoryTest {
+class BeerOrderRepositoryTest {
 
     @Autowired
-    PhoneOrderRepository phoneOrderRepository;
+    BeerOrderRepository beerOrderRepository;
 
     @Autowired
     CustomerRepository customerRepository;
 
     @Autowired
-    PhoneRepository phoneRepository;
+    BeerRepository beerRepository;
 
     Customer testCustomer;
-    Phone testPhone;
+    Beer testBeer;
 
     @BeforeEach
     void setUp() {
         testCustomer = customerRepository.findAll().get(0);
-        testPhone = phoneRepository.findAll().get(0);
+        testBeer = beerRepository.findAll().get(0);
     }
 
     @Transactional
     @Test
-    void testPhoneOrders() {
-        PhoneOrder phoneOrder = PhoneOrder.builder()
+    void testBeerOrders() {
+        BeerOrder beerOrder = BeerOrder.builder()
                 .customerRef("Test order")
                 .customer(testCustomer)
-                .phoneOrderShipment(PhoneOrderShipment.builder()
+                .beerOrderShipment(BeerOrderShipment.builder()
                         .trackingNumber("1235r")
                         .build())
                 .build();
 
-        PhoneOrder savedPhoneOrder = phoneOrderRepository.save(phoneOrder);
+        BeerOrder savedBeerOrder = beerOrderRepository.save(beerOrder);
 
-        System.out.println(savedPhoneOrder.getCustomerRef());
+
+        System.out.println(savedBeerOrder.getCustomerRef());
     }
 }

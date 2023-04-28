@@ -18,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
-
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -37,5 +36,5 @@ public class Customer {
 
     @Builder.Default
     @OneToMany(mappedBy = "customer")
-    private Set<PhoneOrder> phoneOrders = new HashSet<>();
+    private Set<BeerOrder> beerOrders = new HashSet<>();
 }

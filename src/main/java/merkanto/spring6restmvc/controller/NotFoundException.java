@@ -3,11 +3,9 @@ package merkanto.spring6restmvc.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Value not found")
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Value Not Found")
 public class NotFoundException extends RuntimeException {
-
     public NotFoundException() {
-        super();
     }
 
     public NotFoundException(String message) {
@@ -22,7 +20,7 @@ public class NotFoundException extends RuntimeException {
         super(cause);
     }
 
-    protected NotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -13,8 +13,6 @@ public class CustomerServiceImpl implements CustomerService {
     private Map<UUID, CustomerDTO> customerMap;
 
     public CustomerServiceImpl() {
-        this.customerMap = new HashMap<>();
-
         CustomerDTO customer1 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Customer 1")
@@ -96,4 +94,3 @@ public class CustomerServiceImpl implements CustomerService {
         return new ArrayList<>(customerMap.values());
     }
 }
-

@@ -1,5 +1,5 @@
 drop table if exists category;
-drop table if exists phone_category;
+drop table if exists beer_category;
 
 create table category
 (
@@ -10,11 +10,11 @@ create table category
     version            bigint      DEFAULT NULL
 ) ENGINE = InnoDB;
 
-create table phone_category
+create table beer_category
 (
-    phone_id     varchar(36) NOT NULL,
+    beer_id     varchar(36) NOT NULL,
     category_id varchar(36) NOT NULL,
-    primary key (phone_id, category_id),
-    constraint pc_phone_id_fk FOREIGN KEY (phone_id) references phone (id),
+    primary key (beer_id, category_id),
+    constraint pc_beer_id_fk FOREIGN KEY (beer_id) references beer (id),
     constraint pc_category_id_fk FOREIGN KEY (category_id) references category (id)
 ) ENGINE = InnoDB;

@@ -11,25 +11,25 @@ import java.util.UUID;
 
 @Builder
 @Data
-public class PhoneDTO {
-
+public class BeerDTO {
     private UUID id;
     private Integer version;
 
     @NotBlank
     @NotNull
-    private String phoneName;
+    private String beerName;
 
     @NotNull
-    private PhoneStyle phoneStyle;
+    private BeerStyle beerStyle;
 
     @NotNull
     @NotBlank
-    private String imei;
+    private String upc;
     private Integer quantityOnHand;
 
     @NotNull
     private BigDecimal price;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
+
 }

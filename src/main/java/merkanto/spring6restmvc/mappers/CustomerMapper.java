@@ -1,4 +1,4 @@
-package merkanto.spring6restmvc.entities.mappers;
+package merkanto.spring6restmvc.mappers;
 
 import merkanto.spring6restmvc.entities.Customer;
 import merkanto.spring6restmvc.model.CustomerDTO;
@@ -10,4 +10,5 @@ public interface CustomerMapper {
     Customer customerDtoToCustomer(CustomerDTO dto);
 
     CustomerDTO customerToCustomerDto(Customer customer);
+
 }

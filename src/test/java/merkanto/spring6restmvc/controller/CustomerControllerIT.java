@@ -1,7 +1,7 @@
 package merkanto.spring6restmvc.controller;
 
 import merkanto.spring6restmvc.entities.Customer;
-import merkanto.spring6restmvc.entities.mappers.CustomerMapper;
+import merkanto.spring6restmvc.mappers.CustomerMapper;
 import merkanto.spring6restmvc.model.CustomerDTO;
 import merkanto.spring6restmvc.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class CustomerControllerIT {
     void deleteByIdFound() {
         Customer customer = customerRepository.findAll().get(0);
 
-        ResponseEntity responseEntity = customerController.deleteById(customer.getId());
+        ResponseEntity responseEntity = customerController.deleteCustomerById(customer.getId());
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
 
         assertThat(customerRepository.findById(customer.getId()).isEmpty());
@@ -45,21 +45,21 @@ class CustomerControllerIT {
     @Test
     void testDeleteNotFound() {
         assertThrows(NotFoundException.class, () -> {
-            customerController.deleteById(UUID.randomUUID());
+            customerController.deleteCustomerById(UUID.randomUUID());
         });
     }
 
     @Test
     void testUpdateNotFound() {
         assertThrows(NotFoundException.class, () -> {
-            customerController.updateCustomerById(UUID.randomUUID(), CustomerDTO.builder().build());
+            customerController.updateCustomerByID(UUID.randomUUID(), CustomerDTO.builder().build());
         });
     }
 
     @Rollback
     @Transactional
     @Test
-    void updateExistingPhone() {
+    void updateExistingBeer() {
         Customer customer = customerRepository.findAll().get(0);
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(customer);
         customerDTO.setId(null);
@@ -67,7 +67,7 @@ class CustomerControllerIT {
         final String customerName = "UPDATED";
         customerDTO.setName(customerName);
 
-        ResponseEntity responseEntity = customerController.updateCustomerById(customer.getId(), customerDTO);
+        ResponseEntity responseEntity = customerController.updateCustomerByID(customer.getId(), customerDTO);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
 
         Customer updatedCustomer = customerRepository.findById(customer.getId()).get();
@@ -77,7 +77,7 @@ class CustomerControllerIT {
     @Rollback
     @Transactional
     @Test
-    void saveNewPhoneTest() {
+    void saveNewBeerTest() {
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .name("TEST")
                 .build();
@@ -116,7 +116,6 @@ class CustomerControllerIT {
         assertThrows(NotFoundException.class, () -> {
             customerController.getCustomerById(UUID.randomUUID());
         });
-
     }
 
     @Test

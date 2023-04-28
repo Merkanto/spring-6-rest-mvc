@@ -16,19 +16,19 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-//@AllArgsConstructor
 @Builder
-public class PhoneOrder {
+public class BeerOrder {
 
-    public PhoneOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef, Customer customer, Set<PhoneOrderLine> phoneOrderLines, PhoneOrderShipment phoneOrderShipment) {
+    public BeerOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef,
+                     Customer customer, Set<BeerOrderLine> beerOrderLines, BeerOrderShipment beerOrderShipment) {
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
-        this.phoneOrderLines = phoneOrderLines;
-        this.setPhoneOrderShipment(phoneOrderShipment);
+        this.beerOrderLines = beerOrderLines;
+        this.setBeerOrderShipment(beerOrderShipment);
     }
 
     @Id
@@ -62,17 +62,19 @@ public class PhoneOrder {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-        customer.getPhoneOrders().add(this);
+        customer.getBeerOrders().add(this);
     }
 
-    public void setPhoneOrderShipment(PhoneOrderShipment phoneOrderShipment) {
-        this.phoneOrderShipment = phoneOrderShipment;
-        phoneOrderShipment.setPhoneOrder(this);
+    public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
+        this.beerOrderShipment = beerOrderShipment;
+        beerOrderShipment.setBeerOrder(this);
     }
 
-    @OneToMany(mappedBy = "phoneOrder")
-    private Set<PhoneOrderLine> phoneOrderLines;
+    @OneToMany(mappedBy = "beerOrder")
+    private Set<BeerOrderLine> beerOrderLines;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    private PhoneOrderShipment phoneOrderShipment;
+    private BeerOrderShipment beerOrderShipment;
+
+
 }

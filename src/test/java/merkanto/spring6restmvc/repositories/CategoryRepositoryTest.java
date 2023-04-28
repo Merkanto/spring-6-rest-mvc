@@ -1,40 +1,38 @@
 package merkanto.spring6restmvc.repositories;
 
 import merkanto.spring6restmvc.entities.Category;
-import merkanto.spring6restmvc.entities.Phone;
+import merkanto.spring6restmvc.entities.Beer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class CategoryRepositoryTest {
-
     @Autowired
     CategoryRepository categoryRepository;
 
     @Autowired
-    PhoneRepository phoneRepository;
-
-    Phone testPhone;
+    BeerRepository beerRepository;
+    Beer testBeer;
 
     @BeforeEach
     void setUp() {
-        testPhone = phoneRepository.findAll().get(0);
+        testBeer = beerRepository.findAll().get(0);
     }
 
     @Transactional
     @Test
     void testAddCategory() {
         Category savedCat = categoryRepository.save(Category.builder()
-                        .description("Monoblock")
+                .description("Ales")
                 .build());
 
-        testPhone.addCategory(savedCat);
-        Phone savedPhone = phoneRepository.save(testPhone);
-        System.out.println(savedPhone.getPhoneName());
+        testBeer.addCategory(savedCat);
+        Beer saveBeer = beerRepository.save(testBeer);
+
+        System.out.println(saveBeer.getBeerName());
+
     }
 }
