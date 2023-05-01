@@ -147,7 +147,7 @@ class BeerControllerIT {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
 
     }
 
